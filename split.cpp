@@ -11,6 +11,7 @@ the function below should be the only one in this file.
 */
 
 #include "split.h"
+#include <cstddef>
 
 /* Add a prototype for a helper function here if you need */
 
@@ -18,6 +19,49 @@ void split(Node*& in, Node*& odds, Node*& evens)
 {
   /* Add code here */
 // WRITE YOUR CODE HERE
+
+  //base cases
+
+  //if in list is empty
+  if(in == NULL)
+  {
+    return;
+  }
+  
+  //if in list has one element
+  if(in->next == NULL) 
+  {
+    if(in->value % 2 == 0)
+    {
+      evens = in; //even and in now point to the same node (the only node in the list in) 
+    }
+    else
+    {
+      odds = in; 
+    }
+    in = NULL; //upon terminating split, in is set to NULL 
+    return;
+  }
+
+  //recursive case
+
+  //if the value is even
+  if(in->value % 2 == 0)
+  {
+    evens = in;         //point evens to the current node in the list we pull from (in) (they reference the same current node in memory)
+    evens->next = NULL; //so the rest of the in values are not included in evens
+    split(in->next, odds, evens->next); //recursive call to fxn (decreasing size of problem)
+  }
+
+  //if the value is odd
+  else
+  {
+    odds = in;         //point odds to the current node in the list we pull from
+    odds->next = NULL;
+    split(in->next, odds->next, evens); 
+  }
+
 }
+  
 
 /* If you needed a helper function, write it here */
