@@ -45,12 +45,14 @@ void split(Node*& in, Node*& odds, Node*& evens)
 
   //recursive case
 
+  Node* next = in->next; //WHY does this work instead of just putting in-> in the recursive call. I was getting segfaults why?  
+
   //if the value is even
   if(in->value % 2 == 0)
   {
     evens = in;         //point evens to the current node in the list we pull from (in) (they reference the same current node in memory)
     evens->next = NULL; //so the rest of the in values are not included in evens
-    split(in->next, odds, evens->next); //recursive call to fxn (decreasing size of problem)
+    split(next, odds, evens->next); //recursive call to fxn (decreasing size of problem)
   }
 
   //if the value is odd
@@ -58,7 +60,7 @@ void split(Node*& in, Node*& odds, Node*& evens)
   {
     odds = in;         //point odds to the current node in the list we pull from
     odds->next = NULL;
-    split(in->next, odds->next, evens); 
+    split(next, odds->next, evens); 
   }
 
 }

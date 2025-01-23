@@ -2,19 +2,19 @@
 #include <stdexcept>
 #include "ulliststr.h"
 
-ULListStr::ULListStr()
+ULListStr::ULListStr() //constructor
 {
   head_ = NULL;
   tail_ = NULL;
   size_ = 0;
 }
 
-ULListStr::~ULListStr()
+ULListStr::~ULListStr() //destructor
 {
   clear();
 }
 
-bool ULListStr::empty() const
+bool ULListStr::empty() const 
 {
   return size_ == 0;
 }
@@ -62,4 +62,28 @@ void ULListStr::clear()
   }
   tail_ = NULL;
   size_ = 0;
+}
+
+void ULListStr::push_back(const std::string& val)
+{}
+
+void ULListStr::pop_back()
+{
+
+}
+
+void ULListStr::push_front(const std::string& val)
+{}
+
+void ULListStr::pop_front()
+{}
+
+std::string const & ULListStr::back() const
+{}
+
+std::string const & ULListStr::front() const
+{}
+
+std::string* ULListStr::getValAtLoc(size_t loc) const
+{
 }
