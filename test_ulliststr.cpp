@@ -9,5 +9,9 @@
 
 int main(int argc, char* argv[])
 {
-
+    ULListStr list;
+    std::string s = "hello";
+    list.push_back(s);
+    std::cout << list.get(0) << std::endl;
+    return 0;
 }
