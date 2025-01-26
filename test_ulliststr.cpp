@@ -13,5 +13,9 @@ int main(int argc, char* argv[])
     std::string s = "hello";
     list.push_back(s);
     std::cout << list.get(0) << std::endl;
+    list.set(0, "goodbye");
+    std::cout << list.get(0) << std::endl;
+    list.push_back("world");
+    std::cout << list.get(1) << std::endl;
     return 0;
 }

@@ -101,10 +101,11 @@ void ULListStr::push_back(const std::string& val)
     tail_->next = newTail;      //forward link
     newTail->prev = tail_;      //backward link 
 
-    tail_ = newTail;            //assigns new tail
+    //assigns new tail
+    tail_ = newTail;            
   }
 
-  size_++; //incerement size of list once 
+  size_++; //size of list (array values) grows by one
 }
 
 
@@ -114,9 +115,27 @@ void ULListStr::push_back(const std::string& val)
  */
 void ULListStr::pop_back()
 {
+  if(empty())
+  {
+    return;
+  }
+  else 
+  {
+    //if current tail item has more than 1 element
+    if(tail_->last > 1)
+    {
+      tail_->last--;  //voids the legitimacy of the element at the last index (since last is exclusive)
+    }
+    //if current tail has only 1 element left (what we will remove)
+    else
+    {
+      tail_ = tail_->prev; //tail node is the previous node
+      delete tail_->next;  //delete old tail node holding 1 element to remove
+    }
+  }
 
+  size_--; //size of list (array values) decreases by one
 }
-
 
 
 /**
@@ -128,7 +147,42 @@ void ULListStr::pop_back()
  */
 void ULListStr::push_front(const std::string& val)
 {
-  
+
+  //same as push_back empty case
+  if(empty())
+  {
+    head_ = new Item();  
+    head_->val[0] = val;
+    head_->first = 0;
+    head_->last = 1;
+    tail_ = head_;
+  }
+
+  //if there is room before the first value in the head node
+  else if(head_->first > 0)
+  {
+    head_->first--;                   //move the first index back one
+    head_->val[head_->first] = val;   //add the value to the new first index
+  }
+
+  //if there is NO room before the first value in the head node
+  else
+  {
+    Item* newHead = new Item();
+    newHead->val[ARRSIZE-1] = val;  //add the value to the last index of the new head node. Differs from push_back
+    newHead->first = ARRSIZE-1;     
+    newHead->last = ARRSIZE; 
+
+    //link the new head to the old
+    head_->prev = newHead;          
+    newHead->next = head_;          
+
+    //assign new head
+    head_ = newHead;             
+  }
+
+  size_++;
+
 }
 
 
