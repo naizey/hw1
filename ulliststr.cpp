@@ -122,7 +122,7 @@ void ULListStr::pop_back()
   else 
   {
     //if current tail item has more than 1 element
-    if(tail_->last > 1)
+    if(tail_->last - tail_->first > 1) //since first is not always at 0
     {
       tail_->last--;  //voids the legitimacy of the element at the last index (since last is exclusive)
     }
@@ -193,10 +193,27 @@ void ULListStr::push_front(const std::string& val)
  */
 void ULListStr::pop_front()
 {
+  if(empty())
+  {
+    return;
+  }
+  else
+  {
+    //if current head node has more than 1 element
+    if(head_->last - head_->first > 1) //since the first doesn't always start at 0. First index varies
+    {
+      head_->first++; //voids the legitimacy of the element at the first index
+    }
 
+    //if deleting only value in head node array
+    else
+    {
+      head_ = head_->next; 
+      delete head_->prev;
+    }
+  }
 
 }
-
 
 
 
@@ -206,7 +223,7 @@ void ULListStr::pop_front()
  */
 std::string const & ULListStr::back() const
 {
-
+  return tail_->val[tail_->last-1];
 }
 
 
@@ -216,7 +233,7 @@ std::string const & ULListStr::back() const
  */
 std::string const & ULListStr::front() const
 {
-
+  return head_->val[head_->first];
 }
 
 
@@ -227,5 +244,35 @@ std::string const & ULListStr::front() const
  */
 std::string* ULListStr::getValAtLoc(size_t loc) const
 {
+  //check if loc is valid (in bounds). No need to check if loc<0 since loc is unsigned integer type (size_t - cannot represent negative values)
+  if(loc >= size_)
+  {
+    return NULL;
+  }
 
+  //traverse list starting from head
+  Item* node_cntr = new Item();
+  node_cntr = head_;
+
+  int index = 0; //counter for when inside the current node
+
+  //traverse list starting from head
+  while(index < loc)
+  {
+    //if the node we are in has more than one element
+    if(node_cntr->last - node_cntr->first > 1)
+    {
+      index++;
+    }
+
+    //if the node we are in has only one element
+    else
+    {
+      node_cntr = node_cntr->next; //move to next node while index < loc
+      index++;
+    }
+  }
+  
+  return &(node_cntr->val[node_cntr->first + (loc - index)]); //return the address of the value at the index we want
+  
 }
