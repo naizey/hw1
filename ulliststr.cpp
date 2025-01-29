@@ -120,6 +120,8 @@ void ULListStr::pop_back()
     {
       Item* temp = tail_;
       tail_ = tail_->prev;
+
+      //if the current iterator on tail is not null, make the next null (for pop_back)
       if(tail_ != nullptr)
       {
         tail_->next = nullptr;
@@ -207,6 +209,8 @@ void ULListStr::pop_front()
     {
       Item* temp = head_;
       head_ = head_->next; 
+
+      //check there is another item after, set the previous to null (for pop_front)
       if(head_ != nullptr)
       {
         head_->prev = nullptr;
@@ -274,7 +278,7 @@ std::string* ULListStr::getValAtLoc(size_t loc) const
     //not found 
 
     //decrease index by the size of the current item array
-    index -= item_size;
+    index -= item_size; 
 
     //check next item
     current = current->next; 
