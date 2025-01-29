@@ -71,41 +71,30 @@ void ULListStr::clear()
 */
 void ULListStr::push_back(const std::string& val)
 {
-
-  //if list is empty, create a new item and set the first value to val
-  if(empty())
+  // If the list is empty
+  if(tail_ == nullptr) 
   {
-    Item* head_ = new Item(); //creates the first item in the empty list
-    head_->val[0] = val;
-    head_->first = 0;     //updates indexes of first and last
-    head_->last = 1;      //last is exclusive
-    tail_ = head_;        //tail points to the same node as head (one node)
+    tail_ = new Item();
+    head_ = tail_;
   }
 
-  //not empty, current tail node has room for more values 
-  else if(tail_->last < ARRSIZE)
+  // If there is space in the current tail item
+  if(tail_->last < ARRSIZE) 
   {
-    tail_->val[tail_->last] = val;  //set the tail nodes last spot to value we want to add
-    tail_->last++;                  //renew last index to next spot 
+    tail_->val[tail_->last] = val;
+    tail_->last++;
+  }
+  else 
+  {
+    Item* newItem = new Item();
+    newItem->val[newItem->last] = val;
+    newItem->last++;
+    newItem->prev = tail_;
+    tail_->next = newItem;
+    tail_ = newItem;
   }
 
-  //not empty, current tail node has NO room for more values. tail_->last == ARRSIZE
-  else
-  {
-    Item* newTail = new Item(); //create a new node to become the new tail_
-    newTail->val[0] = val;      //set newTails first index to the val we want to add
-    newTail->first = 0;         //update first index
-    newTail->last = 1;          //update last index
-
-    //link the new tail to old. Necessary for newTail to know its place in the list
-    tail_->next = newTail;      //forward link
-    newTail->prev = tail_;      //backward link 
-
-    //assigns new tail
-    tail_ = newTail;            
-  }
-
-  size_++; //size of list (array values) grows by one
+  size_++;
 }
 
 
@@ -129,8 +118,17 @@ void ULListStr::pop_back()
     //if current tail has only 1 element left (what we will remove)
     else
     {
-      tail_ = tail_->prev; //tail node is the previous node
-      delete tail_->next;  //delete old tail node holding 1 element to remove
+      Item* temp = tail_;
+      tail_ = tail_->prev;
+      if(tail_ != nullptr)
+      {
+        tail_->next = nullptr;
+      }
+      else
+      {
+        head_ = nullptr;
+      }
+      delete temp;
     }
   }
 
@@ -147,7 +145,6 @@ void ULListStr::pop_back()
  */
 void ULListStr::push_front(const std::string& val)
 {
-
   //same as push_back empty case
   if(empty())
   {
@@ -208,11 +205,21 @@ void ULListStr::pop_front()
     //if deleting only value in head node array
     else
     {
+      Item* temp = head_;
       head_ = head_->next; 
-      delete head_->prev;
+      if(head_ != nullptr)
+      {
+        head_->prev = nullptr;
+      }
+      else
+      {
+        tail_ = nullptr;
+      }
+      delete temp;
     }
   }
 
+  size_--;
 }
 
 
@@ -237,42 +244,41 @@ std::string const & ULListStr::front() const
 }
 
 
-/** 
- * Returns a pointer to the item at index, loc,
- *  if loc is valid and NULL otherwise
- *   - MUST RUN in O(n) 
- */
+
+// /** 
+//  * Returns a pointer to the item at index, loc,
+//  *  if loc is valid and NULL otherwise
+//  *   - MUST RUN in O(n) 
+//  */
 std::string* ULListStr::getValAtLoc(size_t loc) const
 {
-  //check if loc is valid (in bounds). No need to check if loc<0 since loc is unsigned integer type (size_t - cannot represent negative values)
+  // Check if loc is valid (in bounds)
   if(loc >= size_)
   {
     return NULL;
   }
 
-  //traverse list starting from head
-  Item* node_cntr = new Item();
-  node_cntr = head_;
+  // Traverse the list to find the item containing the element at loc
+  Item* current = head_;
+  size_t index = loc;
 
-  int index = 0; //counter for when inside the current node
-
-  //traverse list starting from head
-  while(index < loc)
+  while(current != NULL)
   {
-    //if the node we are in has more than one element
-    if(node_cntr->last - node_cntr->first > 1)
+    size_t item_size = current->last - current->first; //size of the current item array
+
+    if(index < item_size)
     {
-      index++;
+      return &current->val[current->first + index];
     }
 
-    //if the node we are in has only one element
-    else
-    {
-      node_cntr = node_cntr->next; //move to next node while index < loc
-      index++;
-    }
+    //not found 
+
+    //decrease index by the size of the current item array
+    index -= item_size;
+
+    //check next item
+    current = current->next; 
   }
-  
-  return &(node_cntr->val[node_cntr->first + (loc - index)]); //return the address of the value at the index we want
-  
+
+  return NULL; // should never be reached if loc is valid
 }
